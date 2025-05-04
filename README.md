@@ -74,6 +74,56 @@ All sensitive info stays within Docker network
 | Rally API | REST (ZSESSIONID token) |
 | DevOps    | Docker + Docker Compose |
 
+---
+
+## 🌐 **Stage 2 — Reverse Proxy & HTTPS**
+
+This stage securely exposes both frontend and backend under a unified HTTPS domain.
+
+### 🏗️ Architecture
+Internet (HTTPS)
+│
+[Nginx]
+/
+React app FastAPI API
+(frontend) (/api)
+
+
+### ⚙️ Setup
+
+1️⃣ **Generate SSL certificate (Self-signed)**
+
+```bash
+mkdir -p nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/ssl/server.key \
+  -out nginx/ssl/server.crt \
+  -subj "/C=IN/ST=Karnataka/L=da/O=YourCompany/CN=yourdomain.com"
+
+#Run Docker Compose
+  docker compose down
+  docker compose up --build
+
+🌐 Access URLs
+| URL                                                                | Description          |
+| ------------------------------------------------------------------ | -------------------- |
+| [https://yourdomain.com](https://yourdomain.com)                   | React frontend       |
+| [https://yourdomain.com/api](https://yourdomain.com/api)           | FastAPI backend API  |
+| [https://yourdomain.com/api/docs](https://yourdomain.com/api/docs) | FastAPI Swagger Docs |
+
+
+🔐 Security
+HTTPS enabled (Nginx reverse proxy)
+
+Internal backend/frontend traffic is secure via Docker private network
+
+Rally API secrets remain in .env (not exposed)
+
+
+
+
+
+
 
 
 
